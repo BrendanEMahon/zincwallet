@@ -65,7 +65,7 @@
     ZNWalletManager *m = [ZNWalletManager sharedInstance];
 
     self.spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-    self.spinner.accessibilityLabel = @"synchornizing";
+    self.spinner.accessibilityLabel = @"synchronizing";
     
     self.settingsButton.accessibilityLabel = @"settings";
     self.settingsButton.accessibilityHint = @"show settings";
@@ -214,6 +214,11 @@
     
     static BOOL firstAppearance = YES;
     ZNWalletManager *m = [ZNWalletManager sharedInstance];
+    
+    ZNWallet *w = [[ZNWalletManager sharedInstance] wallet];
+    self.navigationItem.title = [NSString stringWithFormat:@"%@ (%@)",
+                                 [[ZNWalletManager sharedInstance] stringForAmount:w.balance],
+                                 [[ZNWalletManager sharedInstance] localCurrencyStringForAmount:w.balance]];
     
     if (! m.wallet) {
         UINavigationController *c = [self.storyboard instantiateViewControllerWithIdentifier:@"ZNNewWalletNav"];

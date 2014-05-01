@@ -33,6 +33,18 @@
 {
     // Override point for customization after application launch.
 
+    // Create standardUserDefaults database for user preferences.
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    
+    if (![defaults objectForKey:@"bitcoinSymbol"]) {
+        [defaults setObject:@"\xC9\x83" forKey:@"bitcoinSymbol"];
+    }
+    if (![defaults objectForKey:@"testnet"]) {
+        [defaults setBool:TRUE forKey:@"testnet"];
+    }
+    
+    [defaults synchronize];
+    
     // use background fetch to stay synced with the blockchain
     [[UIApplication sharedApplication] setMinimumBackgroundFetchInterval:UIApplicationBackgroundFetchIntervalMinimum];
 

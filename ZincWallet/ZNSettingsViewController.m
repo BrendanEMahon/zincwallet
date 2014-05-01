@@ -101,7 +101,21 @@
 {
     [super viewWillAppear:animated];
     
+    ZNWallet *w = [[ZNWalletManager sharedInstance] wallet];
+    
+    // Code is called before and after reloadData to accomodate difficult bug
+    self.navigationItem.title = [NSString stringWithFormat:@"%@ (%@)",
+                                 [[ZNWalletManager sharedInstance] stringForAmount:w.balance],
+                                 [[ZNWalletManager sharedInstance] localCurrencyStringForAmount:w.balance]];
+    
     self.transactions = [NSArray arrayWithArray:[[[ZNWalletManager sharedInstance] wallet] recentTransactions]];
+    
+    [self.tableView reloadData];
+    
+    self.navigationItem.title = [NSString stringWithFormat:@"%@ (%@)",
+                                 [[ZNWalletManager sharedInstance] stringForAmount:w.balance],
+                                 [[ZNWalletManager sharedInstance] localCurrencyStringForAmount:w.balance]];
+
 }
 
 - (void)setBackgroundForCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)path
@@ -142,7 +156,7 @@
 {
     switch (section) {
         case 0: return self.transactions.count ? self.transactions.count : 1;
-        case 1: return 2;
+        case 1: return 3;
         case 2: return 1;
         case 3: return 1;
         default: NSAssert(FALSE, @"%s:%d %s: unkown section %d", __FILE__, __LINE__,  __func__, (int)section);
@@ -258,8 +272,12 @@
                 case 0:
                     cell.textLabel.text = @"about";
                     break;
-
+                    
                 case 1:
+                    cell.textLabel.text = @"preferences";
+                    break;
+                    
+                case 2:
                     cell.textLabel.text = @"backup phrase";
                     break;
                     
@@ -316,6 +334,9 @@
 
         case 3:
             return 44;
+        
+        case 4:
+            return 44;
 
         default:
             NSAssert(FALSE, @"%s:%d %s: unkown indexPath.section %d", __FILE__, __LINE__,  __func__,
@@ -338,8 +359,11 @@
 
         case 2:
             return 22;
-
+        
         case 3:
+            return 22;
+
+        case 4:
             h = tableView.frame.size.height - self.navigationController.navigationBar.frame.size.height - 20.0 - 44.0;
 
             for (int s = 0; s < section; s++) {
@@ -404,6 +428,11 @@
                     break;
                     
                 case 1:
+                    c = [self.storyboard instantiateViewControllerWithIdentifier:@"ZNPreferencesViewController"];
+                    [ZNStoryboardSegue segueFrom:self to:c completion:nil];
+                    break;
+                    
+                case 2:
                     [[[UIAlertView alloc] initWithTitle:@"WARNING" message:warning delegate:self
                       cancelButtonTitle:@"cancel" otherButtonTitles:@"show", nil] show];
                     break;
